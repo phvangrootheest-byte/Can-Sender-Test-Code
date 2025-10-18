@@ -24,8 +24,6 @@ void setup() {
   }
 }
 
-Temp1 = read(PIN11);
-
 void loop() {
   static uint32_t counter = 0;
 
@@ -39,7 +37,7 @@ void loop() {
   msg.data[1] = (counter >> 16) & 0xFF;
   msg.data[2] = (counter >>  8) & 0xFF;
   msg.data[3] = (counter      ) & 0xFF;
-  msg.data[4] = Temp1;
+  msg.data[4] = 0xAD;
   msg.data[5] = 0xAD;
   msg.data[6] = 0xBE;
   msg.data[7] = 0xEF;
