@@ -24,8 +24,6 @@ void setup() {
   }
 }
 
-Temp1 = read(PIN11);
-
 void loop() {
   static uint32_t counter = 0;
 
