@@ -1,0 +1,25 @@
+#include <Arduino.h>
+
+const int TEMP_PIN = 25;  // ESP32 GPIO25 (ADC2). Use an ADC1 pin (e.g., 34) if Wi-Fi is enabled.
+
+void setup() {
+  Serial.begin(115200);
+  analogReadResolution(12);                 // 0..4095
+  analogSetPinAttenuation(TEMP_PIN, ADC_11db); // ~0..3.55 V range
+  pinMode(TEMP_PIN, INPUT);
+}
+
+void loop() {
+  int raw = analogRead(TEMP_PIN);                   // raw ADC counts
+  int mv  = analogReadMilliVolts(TEMP_PIN);         // calibrated mV at the pin
+
+  // TMP36/MCP9700A: 10 mV/°C with 500 mV offset
+  float tempC = (mv - 500.0f) / 10.0f;
+  // If using LM35 (10 mV/°C, 0 mV @ 0°C), use:
+  // float tempC = mv / 10.0f;
+
+  float tempF = tempC * 9.0f / 5.0f + 32.0f;
+
+  Serial.printf("ADC=%d, mV=%d, TempC=%.2f, TempF=%.2f\n", raw, mv, tempC, tempF);
+  delay(50);
+}
