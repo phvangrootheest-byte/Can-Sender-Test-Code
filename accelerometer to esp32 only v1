@@ -1,0 +1,46 @@
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+
+Adafruit_MPU6050 mpu;
+
+void setup() {
+  // Try 115200 first. If you see nothing, press the EN button on the ESP32.
+  Serial.begin(115200);
+  while (!Serial) delay(10); 
+
+  Serial.println("--- MPU6050 Orientation Test ---");
+
+  if (!mpu.begin()) {
+    Serial.println("MPU6050 not found! Check SDA (21) and SCL (22)");
+    while (1) yield();
+  }
+
+  Serial.println("Sensor Online. Keep it level...");
+  delay(1000);
+}
+
+void loop() {
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  // 1. Calculate Roll (Rotation around X-axis)
+  // atan2(y, z) converted to degrees
+  float roll = (atan2(a.acceleration.y, a.acceleration.z) * 180.0) / M_PI;
+
+  // 2. Calculate Pitch (Rotation around Y-axis)
+  // atan2(-x, sqrt(y^2 + z^2)) converted to degrees
+  float pitch = (atan2(-a.acceleration.x, sqrt(a.acceleration.y * a.acceleration.y + a.acceleration.z * a.acceleration.z)) * 180.0) / M_PI;
+
+  // 3. Calculate Yaw (Rotation around Z-axis)
+  // This uses the Gyroscope data because gravity doesn't change on the Z-axis.
+  // Note: This is a simplified "instant" yaw.
+  float yaw = g.gyro.z * (180.0 / M_PI); 
+
+  // --- PRINT TO SERIAL MONITOR ---
+  Serial.print("Roll: ");  Serial.print(roll, 1);
+  Serial.print(" | Pitch: "); Serial.print(pitch, 1);
+  Serial.print(" | Yaw Rate: "); Serial.println(yaw, 1);
+
+  delay(100); 
+}
