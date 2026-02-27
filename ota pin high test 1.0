@@ -1,0 +1,32 @@
+#include <WiFi.h>        // For connecting ESP32 to WiFi
+#include <ArduinoOTA.h>  // For enabling over-the-air updates
+
+const char* ssid = "null";  // Change to your WiFi Network name
+const char* password = "null";  // Change to your password
+
+
+int pinNumber = 5;  // GPIO pin
+
+void setup() {
+
+  WiFi.begin(ssid, password);  // Connect to WiFi - defaults to WiFi Station mode
+
+  // Ensure WiFi is connected
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+
+  ArduinoOTA.begin();  // Starts OTA
+  
+  //pin number
+  pinMode(pinNumber, OUTPUT);
+  //pin voltage HIGH for 3.3, LOW for 0
+  digitalWrite(pinNumber, HIGH);
+}
+
+void loop() {
+
+  ArduinoOTA.handle();  // Handles a code update request
+
+  // All loop you're code goes here.
+}
